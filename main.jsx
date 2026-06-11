@@ -1,0 +1,82 @@
+// src/main.jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import AuthProvider from "./context/AuthContext";
+import AppRouter from "./AppRouter";
+
+// Global CSS variables — injected once at root
+const globalStyle = document.createElement("style");
+globalStyle.textContent = `
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #080a0f; --bg2: #0e1118; --bg3: #141820; --bg4: #1c2230;
+    --border: rgba(255,255,255,0.07);
+    --gold: #f0a500; --gold2: #ffc333; --goldDim: rgba(240,165,0,0.15);
+    --green: #00e49a; --red: #ff4d6d;
+    --text: #e8ecf4; --muted: #5a6480; --muted2: #3a4160;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--muted2); border-radius: 4px; }
+  .mono { font-family: 'DM Mono', monospace; }
+
+  @keyframes fadeUp  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+  @keyframes spin    { to{transform:rotate(360deg)} }
+  @keyframes ticker  { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+  @keyframes slideIn { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes scaleIn { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:scale(1)} }
+
+  .fade-up   { animation: fadeUp  .4s ease both; }
+  .fade-up-1 { animation: fadeUp  .4s .05s ease both; }
+  .fade-up-2 { animation: fadeUp  .4s .10s ease both; }
+  .fade-up-3 { animation: fadeUp  .4s .15s ease both; }
+  .fade-up-4 { animation: fadeUp  .4s .20s ease both; }
+  .slide-in  { animation: slideIn .35s ease both; }
+  .scale-in  { animation: scaleIn .3s  ease both; }
+
+  .live-dot  { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 1.5s infinite; }
+  .skeleton  { background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:6px; }
+
+  button { transition: all .15s ease; }
+  button:active:not(:disabled) { transform: scale(.96) !important; }
+
+  .ticker-wrap  { overflow: hidden; width: 100%; }
+  .ticker-track { display: flex; animation: ticker 34s linear infinite; white-space: nowrap; }
+
+  .bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; z-index:100; background:var(--bg2); border-top:1px solid var(--border); padding:8px 0; }
+
+  @media (max-width: 768px) {
+    .sidebar     { display: none !important; }
+    .bottom-nav  { display: flex !important; justify-content: space-around; align-items: center; }
+    .main-wrap   { margin-right: 0 !important; }
+    .topbar      { padding: 10px 14px !important; }
+    .page-body   { padding: 12px 12px 90px !important; }
+    .hide-mobile { display: none !important; }
+    .grid-2col   { grid-template-columns: 1fr !important; }
+    .grid-4col   { grid-template-columns: 1fr 1fr !important; }
+    .ai-panel    { width: 100% !important; left: 0 !important; }
+    .trade-grid  { grid-template-columns: 1fr !important; }
+  }
+`;
+document.head.appendChild(globalStyle);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRouter />
+      </AuthProvider>
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+// Hide splash once React has mounted
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    window.__hideSplash?.();
+  });
+});
